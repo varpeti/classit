@@ -5,15 +5,21 @@ import sys
 import os
 import warnings
 
-if (len(sys.argv) < 3):
-    print("Usage: python classit.py name path/img")
-    sys.exit()
 
-name = sys.argv[1]
-img = np.asarray(PImage.open(sys.argv[2]))
+def main(argv):
+    if len(argv) < 3:
+        print("Usage: python classit.py name path/img")
+        sys.exit()
 
-model = tf.keras.models.load_model(name + "/" + name)
+    name = argv[1]
+    img = np.asarray(PImage.open(argv[2]))
 
-result = model(np.array([img])).numpy()[0]
-warnings.warn(str(result))
-print(np.where(result == max(result))[0][0]) # The index of the max value
+    model = tf.keras.models.load_model(name + "/" + name)
+
+    result = model(np.array([img])).numpy()[0]
+    warnings.warn(str(result))
+    print(np.where(result == max(result))[0][0])  # The index of the max value
+
+
+if __name__ == "__main__":
+    main(sys.argv)

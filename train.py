@@ -4,44 +4,47 @@ import numpy as np
 import sys
 import os
 
-if (len(sys.argv) < 2):
-    print("Usage: python classit.py name")
-    sys.exit()
 
-name = sys.argv[1]
-model = tf.keras.models.load_model(name + "/" + name)
+def main(argv):
+    if len(argv) < 2:
+        print("Usage: python classit.py name")
+        sys.exit()
 
-def loadImages(path):
-    imagesList = os.listdir(path)
-    loadedImages = []
-    for image in imagesList:
-        img = PImage.open(path + image)
-        loadedImages.append(np.asarray(img))
-    return loadedImages
+    name = argv[1]
+    model = tf.keras.models.load_model(name + "/" + name)
 
-trainImages = []
-trainLabels = []
-first = True
+    def loadImages(path):
+        imagesList = os.listdir(path)
+        loadedImages = []
+        for image in imagesList:
+            img = PImage.open(path + image)
+            loadedImages.append(np.asarray(img))
+        return loadedImages
 
-for i in os.listdir(name+"/classes"):
-    imgs = loadImages(name+"/classes/"+i+"/")
+    trainImages = []
+    trainLabels = []
+    first = True
 
-    if (not first):
-        trainImages = np.concatenate([trainImages,imgs])
-        trainLabels = np.concatenate([trainLabels,np.array( [int(i)]*len(imgs) )])
-    else:
-        trainImages = imgs
-        trainLabels = np.array([int(i)]*len(imgs))
-        first = False
+    for i in os.listdir(name + "/classes"):
+        imgs = loadImages(name + "/classes/" + i + "/")
 
-#print(trainImages.shape)
-#print(trainImages.shape)
+        if not first:
+            trainImages = np.concatenate([trainImages, imgs])
+            trainLabels = np.concatenate([trainLabels, np.array([int(i)] * len(imgs))])
+        else:
+            trainImages = imgs
+            trainLabels = np.array([int(i)] * len(imgs))
+            first = False
 
-num = 10
-while 1:
-    model.train_on_batch(trainImages, trainLabels)
-    loss, acc = model.evaluate(trainImages,trainLabels,verbose=1)
-    num-=1
-    if acc>0.9 or num<1:
-        break
-model.save(name+"/"+name)
+    num = 10
+    while 1:
+        model.train_on_batch(trainImages, trainLabels)
+        loss, acc = model.evaluate(trainImages, trainLabels, verbose=1)
+        num -= 1
+        if acc > 0.9 or num < 1:
+            break
+    model.save(name + "/" + name)
+
+
+if __name__ == "__main__":
+    main(sys.argv)
