@@ -18,8 +18,8 @@ def main(argv):
 
     result = model(np.array([img])).numpy()[0]
     warnings.warn(str(result))
-    print(np.where(result == max(result))[0][0])  # The index of the max value
+    return (np.where(result == max(result))[0][0])  # The index of the max value
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    print( main(sys.argv) )
